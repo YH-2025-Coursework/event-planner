@@ -1,0 +1,5 @@
+@EventPlanner.Api_HostAddress = http://localhost:5239
+
+
+# GET {{EventPlanner.Api_HostAddress}}/api/events
+# Accept: application/json
