@@ -34,11 +34,13 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
 
         context.Response.StatusCode = statusCode;
 
-        // 2. We use a simple message for the user
+        // 2. We use a simple message for the user; avoid leaking internal details for unexpected errors
         var response = new
         {
             status = statusCode,
-            message = exception.Message
+            message = exception is NotFoundException or ForbiddenException
+                ? exception.Message
+                : "An unexpected error occurred."
         };
 
         var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
