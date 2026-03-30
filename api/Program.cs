@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using EventPlanner.Api.Data;
+using EventPlanner.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Swagger is only enabled in development environment for security reasons. In production, you typically don't want to expose your API documentation publicly :).
 if (app.Environment.IsDevelopment())
