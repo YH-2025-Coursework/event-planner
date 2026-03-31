@@ -1,3 +1,4 @@
+import { useAuth } from './context/AuthContext';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar'; 
 import EventsPage from './pages/EventsPage';
@@ -6,9 +7,12 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 
 function App() {
+    const { isAuthenticated, role } = useAuth();
     return (
         <>
             <Navbar /> {/* it is placed here so it stays at the top */}
+            
+
 
             <Routes>
                 <Route path="/" element={<EventsPage />} />
