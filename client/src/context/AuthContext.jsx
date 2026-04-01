@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
 
     // ✅ Helper flags for easy checks in your UI components
     const isAuthenticated = !!token; // true if token exists, false if null
-    const isAdmin = role === 'admin';
+    const isAdmin = role?.toLowerCase() === 'admin';
 
     return (
         <AuthContext.Provider 
