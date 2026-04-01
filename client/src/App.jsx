@@ -8,7 +8,7 @@ import RegisterPage from './pages/RegisterPage';
 function App() {
     return (
         <>
-            <Navbar /> {/* it is placed here so it stays at the top */}
+            <Navbar path/> {/* it is placed here so it stays at the top */}
             
 
 
