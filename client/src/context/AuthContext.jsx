@@ -2,7 +2,6 @@ import { createContext, useContext, useState } from 'react';
 
 // 1. Create the Auth Context (the container for our data)
 const AuthContext = createContext();
-
 /**
  * Helper function to parse the user role from a JWT token.
  * Extracted outside the component to keep things clean.

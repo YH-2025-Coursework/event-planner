@@ -12,7 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 function App() {
     return (
         <>
-            <Navbar /> {/* it is placed here so it stays at the top */}
+            <Navbar path/> {/* it is placed here so it stays at the top */}
             
 
 
