@@ -9,6 +9,8 @@ function App() {
     return (
         <>
             <Navbar /> {/* it is placed here so it stays at the top */}
+            
+
 
             <Routes>
                 <Route path="/" element={<EventsPage />} />
