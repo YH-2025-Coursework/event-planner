@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Navbar() {
 
-    const {user, logout} = useAuth();
+    const { isAuthenticated, isAdmin, logout } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -24,16 +24,16 @@ export default function Navbar() {
 
     return (
         <nav style={navStyle}>
-            {!user ? (
+            {!isAuthenticated ? (
                 <> 
                     <Link to="/login">Login</Link>
                     <Link to="/register">Register</Link>
                 </>
             ) : (
                 <>
-                    <Link to="/events">Events</Link>
-                    {user.role == 'Admin' && (
-                        <Link to="/admin/events">Manage Events</Link>
+                    <Link to="/">Events</Link>
+                    {isAdmin && (
+                        <Link to="/admin">Manage Events</Link>
                     )}
                     <button
                         onClick={handleLogout}
