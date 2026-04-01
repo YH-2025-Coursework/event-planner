@@ -21,11 +21,7 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
 
-                {/* protected route for event details, only accessible if authenticated */}
-
-                <Route element={<ProtectedRoute />}>
-                    <Route path="/events/:id" element={<EventDetailPage />} />
-                </Route>
+                <Route path="/events/:id" element={<EventDetailPage />} />
 
                 <Route element={<AdminRoute />}>
                  {/* Use a simple <div> instead of AdminPage until the page is created */}

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 // 1. Create the Auth Context (the container for our data)
 const AuthContext = createContext();
@@ -19,17 +19,11 @@ const getRoleFromToken = (token) => {
 };
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(null);
-    const [role, setRole] = useState(null);
-
-    // 🔄 Restore session when the app mounts (page reload)
-    useEffect(() => {
+    const [token, setToken] = useState(() => localStorage.getItem('token'));
+    const [role, setRole] = useState(() => {
         const savedToken = localStorage.getItem('token');
-        if (savedToken) {
-            setToken(savedToken);
-            setRole(getRoleFromToken(savedToken));
-        }
-    }, []);
+        return savedToken ? getRoleFromToken(savedToken) : null;
+    });
 
     // 🔐 Login function
     const login = (newToken) => {
