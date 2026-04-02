@@ -18,16 +18,26 @@ namespace EventPlanner.Api.Data
             }
 
             await SeedUserAsync(
-                   userManager,
-                   email: "admin@example.com",
-                   password: "Admin1234!",
-                   role: "Admin"
-                );
+                userManager,
+                email: "admin@example.com",
+                displayName: "Admin",
+                password: "Admin1234!",
+                role: "Admin"
+            );
+
+            await SeedUserAsync(
+                userManager,
+                email: "user@example.com",
+                displayName: "Test User",
+                password: "User1234!",
+                role: "User"
+            );
         }
 
         private static async Task SeedUserAsync(
             UserManager<ApplicationUser> userManager,
             string email,
+            string displayName,
             string password,
             string role)
         {
@@ -38,6 +48,7 @@ namespace EventPlanner.Api.Data
             {
                 UserName = email,
                 Email = email,
+                DisplayName = displayName,
                 EmailConfirmed = true
             };
 
