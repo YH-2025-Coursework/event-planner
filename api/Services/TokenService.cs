@@ -39,7 +39,7 @@ namespace EventPlanner.Api.Services
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var expiry = DateTime.UtcNow.AddMinutes(
-                double.Parse(_configuration["Jwt:ExpiryMinutes"]!));
+                double.Parse(_configuration["Jwt:ExpiryMinutes"] ?? "60"));
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
