@@ -22,10 +22,12 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var services = scope.ServiceProvider;
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    var context = services.GetRequiredService<AppDbContext>();
 
-    await SeedData.InitializeAsync(roleManager, userManager);
+    await SeedData.InitializeAsync(roleManager, userManager, context);
 }
 // Swagger is only enabled in development environment for security reasons. In production, you typically don't want to expose your API documentation publicly :).
 if (app.Environment.IsDevelopment())
