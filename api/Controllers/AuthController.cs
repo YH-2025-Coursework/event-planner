@@ -41,7 +41,16 @@ public class AuthController : ControllerBase
 
         await _userManager.AddToRoleAsync(user, "User");
 
-        return StatusCode(201);
+        var roles = await _userManager.GetRolesAsync(user);
+        var token = _tokenService.GenerateToken(user, roles);
+
+        return StatusCode(201, new AuthResponse
+        {
+            Token = token,
+            Email = user.Email!,
+            DisplayName = user.DisplayName,
+            Role = roles.FirstOrDefault() ?? "User"
+        });
     }
 
     [HttpPost("login")]
