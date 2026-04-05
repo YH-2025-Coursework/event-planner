@@ -1,1 +1,24 @@
+/* Temporary basic styles to make forms look decent — will be replaced with proper styling later */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 360px;
+  margin: 60px auto;
+}
 
+form div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+form input {
+  padding: 8px;
+  font-size: 14px;
+}
+
+form button {
+  padding: 8px;
+  cursor: pointer;
+}
