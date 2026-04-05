@@ -10,6 +10,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -72,6 +82,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors("DevCors");
 
 using (var scope = app.Services.CreateScope())
 {
