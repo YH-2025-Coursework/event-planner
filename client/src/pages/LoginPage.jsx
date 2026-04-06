@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../api/client';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
@@ -18,7 +18,7 @@ export default function LoginPage() {
         setError(null);
 
         try {
-            const response = await axios.post('/api/auth/login', { email, password });
+           const response = await apiClient.post('/auth/login', { email, password });
             login(response.data.token);
             navigate('/');
         } catch (err) {
