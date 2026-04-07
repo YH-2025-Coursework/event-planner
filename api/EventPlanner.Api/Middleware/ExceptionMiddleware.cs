@@ -29,6 +29,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         {
             NotFoundException => (int)HttpStatusCode.NotFound,
             ForbiddenException => (int)HttpStatusCode.Forbidden,
+            InvalidOperationException => (int)HttpStatusCode.Conflict,
             _ => (int)HttpStatusCode.InternalServerError
         };
 
@@ -38,7 +39,7 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         var response = new
         {
             status = statusCode,
-            message = exception is NotFoundException or ForbiddenException
+            message = exception is NotFoundException or ForbiddenException or InvalidOperationException
                 ? exception.Message
                 : "An unexpected error occurred."
         };
