@@ -4,11 +4,10 @@ using EventPlanner.Api.Exceptions;
 using EventPlanner.Api.Models;
 using EventPlanner.Api.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.InMemory;
 
 namespace EventPlanner.Api.Tests;
 
-public class UnitTest1
+public class EventServiceTests
 {
     private AppDbContext CreateDb()
     {
@@ -48,30 +47,12 @@ public class UnitTest1
     public async Task GetAllAsync_ReturnsSeededEvents()
     {
         var db = CreateDb();
-
-        var user = new ApplicationUser { Id = "user-1", UserName = "test@test.com", DisplayName = "Test User" };
-        db.Users.Add(user);
-
-        var category = new Category { Name = "Music" };
-        db.Categories.Add(category);
-
-        await db.SaveChangesAsync();
-
-        db.Events.Add(new Event
-        {
-            Title = "Concert",
-            Description = "Fun",
-            Location = "Oslo",
-            StartDate = DateTime.UtcNow,
-            CategoryId = category.Id,
-            OrganizerId = user.Id
-        });
-        await db.SaveChangesAsync();
-
+        var (user, category) = await SeedDependenciesAsync(db);
+        await SeedEventAsync(db, user, category);
         var service = new EventService(db);
 
         var result = await service.GetAllAsync();
-       
+
         Assert.Single(result);
         Assert.Equal("Concert", result.First().Title);
     }
