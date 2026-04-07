@@ -79,6 +79,7 @@ builder.Services.AddAuthentication(options => {
 });
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
