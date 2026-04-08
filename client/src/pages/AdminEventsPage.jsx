@@ -7,10 +7,18 @@ export default function AdminEventsPage() {
     const [editingEvent, setEditingEvent] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
     const [formLoading, setFormLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchEvents = () => {
-        getEvents().then(res => setEvents(res.data));
+    const fetchEvents = async () => {
+        try {
+            const res = await getEvents();
+            setEvents(res.data);
+        } catch {
+            setError('Failed to load events');
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -59,6 +67,7 @@ export default function AdminEventsPage() {
         <div className="page">
             <h1>Admin — Events</h1>
 
+            {loading && <p>Loading events...</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <button onClick={() => { setShowCreate(true); setEditingEvent(null); }}>
@@ -66,11 +75,11 @@ export default function AdminEventsPage() {
             </button>
 
             {showCreate && (
-                <EventForm onSubmit={handleCreate} loading={formLoading} />
+                <EventForm key="new" onSubmit={handleCreate} loading={formLoading} />
             )}
 
             {editingEvent && (
-                <EventForm initial={editingEvent} onSubmit={handleUpdate} loading={formLoading} />
+                <EventForm key={editingEvent.id} initial={editingEvent} onSubmit={handleUpdate} loading={formLoading} />
             )}
 
             {events.map(event => (
