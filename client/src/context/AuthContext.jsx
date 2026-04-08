@@ -10,7 +10,7 @@ const getRoleFromToken = (token) => {
     try {
         // Decode the JWT payload (the middle part) and parse it into a JSON object
         const payload = JSON.parse(atob(token.split('.')[1]));
-        return payload.role || null;
+        return payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || payload.role || null;
     } catch (error) {
         console.error("Failed to parse role from token:", error);
         return null;

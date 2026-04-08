@@ -6,6 +6,8 @@ import EventDetailPage from './pages/EventDetailPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminRoute from './components/AdminRoute'; // importing the AdminRoute component to use for routes that require admin access
+import AdminEventsPage from './pages/AdminEventsPage';
+
 
 // importing the ProtectedRoute component to use for routes that require authentication
 import ProtectedRoute from './components/ProtectedRoute';
@@ -27,6 +29,7 @@ function App() {
                 <Route element={<AdminRoute />}>
                  {/* Use a simple <div> instead of AdminPage until the page is created */}
                    <Route path="/admin" element={<div>Admin Dashboard Area</div>} />
+                   <Route path="/admin/events" element={<AdminEventsPage />} />
                 </Route>
             
 
