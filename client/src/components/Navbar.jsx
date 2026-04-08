@@ -33,7 +33,7 @@ export default function Navbar() {
                 <>
                     <Link to="/">Events</Link>
                     {isAdmin && (
-                        <Link to="/admin">Manage Events</Link>
+                        <Link to="/admin/events">Manage Events</Link>
                     )}
                     <button
                         onClick={handleLogout}
