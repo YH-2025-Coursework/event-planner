@@ -7,6 +7,7 @@ export default function AdminEventsPage() {
     const [editingEvent, setEditingEvent] = useState(null);
     const [showCreate, setShowCreate] = useState(false);
     const [formLoading, setFormLoading] = useState(false);
+    const [deletingId, setDeletingId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -55,11 +56,14 @@ export default function AdminEventsPage() {
 
     const handleDelete = async (id) => {
         if (!confirm('Delete this event?')) return;
+        setDeletingId(id);
         try {
             await deleteEvent(id);
             setEvents(events.filter(e => e.id !== id));
         } catch {
             setError('Failed to delete event');
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -75,11 +79,17 @@ export default function AdminEventsPage() {
             </button>
 
             {showCreate && (
-                <EventForm key="new" onSubmit={handleCreate} loading={formLoading} />
+                <>
+                    <EventForm key="new" onSubmit={handleCreate} loading={formLoading} />
+                    <button onClick={() => setShowCreate(false)}>Cancel</button>
+                </>
             )}
 
             {editingEvent && (
-                <EventForm key={editingEvent.id} initial={editingEvent} onSubmit={handleUpdate} loading={formLoading} />
+                <>
+                    <EventForm key={editingEvent.id} initial={editingEvent} onSubmit={handleUpdate} loading={formLoading} />
+                    <button onClick={() => setEditingEvent(null)}>Cancel</button>
+                </>
             )}
 
             {events.map(event => (
@@ -87,7 +97,9 @@ export default function AdminEventsPage() {
                     <h2>{event.title}</h2>
                     <p>{event.location}</p>
                     <button onClick={() => { setEditingEvent(event); setShowCreate(false); }}>Edit</button>
-                    <button onClick={() => handleDelete(event.id)}>Delete</button>
+                    <button onClick={() => handleDelete(event.id)} disabled={deletingId === event.id}>
+                        {deletingId === event.id ? 'Deleting...' : 'Delete'}
+                    </button>
                 </div>
             ))}
         </div>
