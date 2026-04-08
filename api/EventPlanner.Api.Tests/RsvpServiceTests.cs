@@ -107,4 +107,36 @@ public class RsvpServiceTests
         await Assert.ThrowsAsync<ForbiddenException>(() => 
             service.DeleteAsync(5, "hacker-id"));
     }
+
+    [Fact]
+    public async Task DeleteAsync_ThrowsNotFound_WhenRsvpDoesNotExist()
+    {
+        // Arrange
+        var options = CreateNewContextOptions();
+        using var context = new AppDbContext(options);
+        var service = new RsvpService(context);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => 
+            service.DeleteAsync(999, "user-1"));
+    }
+
+    [Fact]
+    public async Task CreateAsync_ThrowsInvalidOperation_OnDuplicateRsvp()
+    {
+        // Arrange
+        var options = CreateNewContextOptions();
+        using var context = new AppDbContext(options);
+        
+        context.Events.Add(new Event { Id = 1, Title = "Test Event" });
+        context.Rsvps.Add(new Rsvp { EventId = 1, UserId = "user-1" });
+        await context.SaveChangesAsync();
+        
+        var service = new RsvpService(context);
+        var request = new CreateRsvpRequest { EventId = 1 };
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(() => 
+            service.CreateAsync(request, "user-1"));
+    }
 }
