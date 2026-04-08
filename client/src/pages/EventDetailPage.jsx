@@ -12,7 +12,7 @@ export default function EventDetailPage() {
     useEffect(() => {
         getEvent(id)
             .then(res => setEvent(res.data))
-            .catch(() => setError('Event not found'))
+            .catch(err => { console.error(err); setError('Event not found'); })
             .finally(() => setLoading(false));
     }, [id]);
 
