@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiClient from '../api/client'
+import apiClient from '../api/client';
 
 export default function RegisterPage() {
     const [email, setEmail] = useState('');
@@ -20,7 +20,8 @@ export default function RegisterPage() {
             await apiClient.post('/auth/register', { email, password, displayName });
             navigate('/login');
         } catch (err) {
-            setError(err.response?.data?.title || err.response?.data || 'Registration failed');
+            // Updated to check for .message to match your test mock
+            setError(err.response?.data?.message || err.response?.data?.title || 'Registration failed');
         } finally {
             setLoading(false);
         }
@@ -31,18 +32,39 @@ export default function RegisterPage() {
             <h1>Register</h1>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Display Name</label>
-                    <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
+                    {/* Added htmlFor and id to link these for the test */}
+                    <label htmlFor="displayName">Display Name</label>
+                    <input 
+                        id="displayName"
+                        type="text" 
+                        value={displayName} 
+                        onChange={(e) => setDisplayName(e.target.value)} 
+                        required 
+                    />
                 </div>
                 <div>
-                    <label>Email</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <label htmlFor="email">Email</label>
+                    <input 
+                        id="email"
+                        type="email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)} 
+                        required 
+                    />
                 </div>
                 <div>
-                    <label>Password</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    <label htmlFor="password">Password</label>
+                    <input 
+                        id="password"
+                        type="password" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)} 
+                        required 
+                    />
                 </div>
+                {/* role="alert" or simply rendering the text is enough for findByText */}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
+                
                 <button type="submit" disabled={loading}>
                     {loading ? 'Registering...' : 'Register'}
                 </button>

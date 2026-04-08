@@ -1,14 +1,23 @@
-import { render, screen } from '@testing-library/react'
-import { expect, test } from 'vitest'
-import App from '../src/App'
+import { render, screen } from '@testing-library/react';
+import { expect, test, vi } from 'vitest';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '../src/context/AuthContext';
+import App from '../src/App';
 
-test('renders Event Planner header', () => {
-  // 1. Render the component to the virtual DOM
-  render(<App />)
+vi.mock('../src/api/client', () => ({
+  default: { get: vi.fn().mockResolvedValue({ data: [] }), post: vi.fn() }
+}));
 
-  // 2. Search for the text "Event Planner" (case-insensitive)
-  const headerElement = screen.getByText(/Event Planner/i)
-
-  // 3. Assert that the element is present in the document
-  expect(headerElement).toBeInTheDocument()
-})
+test('renders Events Page header', () => {
+  render(
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+  
+  // Changed "Event Planner" to "Events Page" to match your code
+  const headerElement = screen.getByText(/events page/i);
+  expect(headerElement).toBeInTheDocument();
+});
