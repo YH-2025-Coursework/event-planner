@@ -38,6 +38,23 @@ describe('RegisterPage', () => {
     await waitFor(() => expect(mockNavigate).toHaveBeenCalledWith('/login'));
   });
 
+  it('submit button is disabled while loading', async () => {
+    // Mock a pending promise so the "loading" state stays active
+    apiClient.post.mockReturnValue(new Promise(() => {}));
+    
+    render(<RegisterPage />, { wrapper: BrowserRouter });
+    
+    // Fill out the form
+    fireEvent.change(screen.getByLabelText(/display name/i), { target: { value: 'Test User' } });
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@test.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
+
+    fireEvent.click(screen.getByRole('button', { name: /register/i }));
+    
+    // The button should now be disabled
+    expect(screen.getByRole('button', { name: /register/i })).toBeDisabled();
+  });
+
   it('on failure: displays error message', async () => {
     apiClient.post.mockRejectedValue({
       response: { data: { message: 'Email already taken' } }

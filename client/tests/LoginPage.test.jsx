@@ -55,4 +55,18 @@ describe('LoginPage', () => {
       expect(mockNavigate).toHaveBeenCalledWith('/');
     });
   });
+  it('on failure: displays the error message', async () => {
+    // Mock the API to return an error
+    apiClient.post.mockRejectedValue(new Error('Unauthorized'));
+
+    render(<LoginPage />, { wrapper: BrowserRouter });
+    
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'wrong@test.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'wrongpass' } });
+    
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+    // Wait for the error message to appear in the UI
+    expect(await screen.findByText(/invalid email or password/i)).toBeInTheDocument();
+  });
 });
