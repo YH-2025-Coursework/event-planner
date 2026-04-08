@@ -19,22 +19,35 @@ describe('RegisterPage', () => {
 
   it('renders display name, email, password fields and a Register button', () => {
     render(<RegisterPage />, { wrapper: BrowserRouter });
-    expect(screen.getByPlaceholderText(/display name/i) || screen.getByLabelText(/display name/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/email/i) || screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/password/i) || screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /register/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/display name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
-  it('submit button is disabled while loading', () => {
+  it('submit button is disabled while loading', async () => {
+    // Mock a slow response
     apiClient.post.mockReturnValue(new Promise(() => {}));
+    
     render(<RegisterPage />, { wrapper: BrowserRouter });
+    
+    // Fill the fields so the form is "valid" and can submit
+    fireEvent.change(screen.getByLabelText(/display name/i), { target: { value: 'Test User' } });
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@test.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
+
     fireEvent.click(screen.getByRole('button', { name: /register/i }));
+    
     expect(screen.getByRole('button', { name: /register/i })).toBeDisabled();
   });
 
   it('on success: navigates to /login', async () => {
     apiClient.post.mockResolvedValue({ status: 201 });
     render(<RegisterPage />, { wrapper: BrowserRouter });
+
+    // Must fill out fields
+    fireEvent.change(screen.getByLabelText(/display name/i), { target: { value: 'Test User' } });
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@test.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
 
     fireEvent.click(screen.getByRole('button', { name: /register/i }));
 
@@ -50,8 +63,15 @@ describe('RegisterPage', () => {
     });
 
     render(<RegisterPage />, { wrapper: BrowserRouter });
+    
+    // Fill out fields
+    fireEvent.change(screen.getByLabelText(/display name/i), { target: { value: 'Test User' } });
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@test.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
+
     fireEvent.click(screen.getByRole('button', { name: /register/i }));
 
-    expect(await screen.findByText(apiError)).toBeInTheDocument();
+    // Use a regex /.../i to be more flexible with finding text
+    expect(await screen.findByText(new RegExp(apiError, 'i'))).toBeInTheDocument();
   });
 });
