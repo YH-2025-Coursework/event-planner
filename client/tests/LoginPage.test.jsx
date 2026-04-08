@@ -1,48 +1,58 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import apiClient from '../api/client';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { BrowserRouter } from 'react-router-dom';
+import LoginPage from '../src/pages/LoginPage';
+import apiClient from '../src/api/client';
 
-const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const { login } = useAuth();
-  const navigate = useNavigate();
+vi.mock('../src/api/client');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return { ...actual, useNavigate: () => mockNavigate };
+});
 
-    try {
-      const response = await apiClient.post('/auth/login', { email, password });
-      login(response.data.token); // Satisfies "calls login() with token"
-      navigate('/'); // Satisfies "navigates to /"
-    } catch (err) {
-      setError('Invalid email or password'); // Match the exact string in your test
-    } finally {
-      setLoading(false);
-    }
-  };
+const mockLogin = vi.fn();
+vi.mock('../src/context/AuthContext', () => ({
+  useAuth: () => ({ login: mockLogin }),
+}));
 
-  return (
-    <div>
-      <h1>Login</h1>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="email" onChange={(e) => setEmail(e.target.value)} />
+describe('LoginPage', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-        <label htmlFor="password">Password</label>
-        <input id="password" type="password" onChange={(e) => setPassword(e.target.value)} />
+  it('renders email, password fields and a Login button', () => {
+    render(<LoginPage />, { wrapper: BrowserRouter });
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+  });
 
-        <button type="submit" disabled={loading}>Login</button>
-      </form>
-    </div>
-  );
-};
+  it('submit button is disabled while loading', async () => {
+    apiClient.post.mockReturnValue(new Promise(() => {}));
+    render(<LoginPage />, { wrapper: BrowserRouter });
+    
+    // Must fill fields to trigger submit
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@test.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
+    
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+    expect(screen.getByRole('button', { name: /login/i })).toBeDisabled();
+  });
 
-export default LoginPage;
+  it('on success: calls login() and navigates to /', async () => {
+    apiClient.post.mockResolvedValue({ data: { token: 'fake-token' } });
+    render(<LoginPage />, { wrapper: BrowserRouter });
+
+    // Fill BOTH fields
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'test@test.com' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } });
+    
+    fireEvent.click(screen.getByRole('button', { name: /login/i }));
+
+    await waitFor(() => {
+      expect(mockLogin).toHaveBeenCalledWith('fake-token');
+      expect(mockNavigate).toHaveBeenCalledWith('/');
+    });
+  });
+});
