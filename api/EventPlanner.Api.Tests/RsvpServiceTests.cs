@@ -72,8 +72,10 @@ public class RsvpServiceTests
         var service = new RsvpService(context);
         var request = new CreateRsvpRequest { EventId = 1 };
 
-        await service.CreateAsync(request, "user-1");
+        var response = await service.CreateAsync(request, "user-1");
 
+        Assert.Equal(1, response.EventId);
+        Assert.Equal(request.Status, response.Status);
         var rsvp = await context.Rsvps.FirstOrDefaultAsync(r => r.EventId == 1 && r.UserId == "user-1");
         Assert.NotNull(rsvp);
     }
