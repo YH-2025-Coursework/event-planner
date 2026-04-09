@@ -29,9 +29,9 @@ const LoginPage = () => {
 
   return (
     <div>
-      <h1>Login</h1>
-      {error && <p role="alert">{error}</p>}
       <form onSubmit={handleSubmit}>
+        <h1>Login</h1>
+        {error && <p role="alert">{error}</p>}
         <div>
           <label htmlFor="loginEmail">Email</label>
           <input 

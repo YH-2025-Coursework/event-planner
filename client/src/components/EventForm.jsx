@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getCategories } from '../api/events';
 
-export default function EventForm({ initial = {}, onSubmit, loading }) {
+export default function EventForm({ initial = {}, onSubmit, onCancel, loading }) {
     const [form, setForm] = useState({
         title: initial.title || '',
         description: initial.description || '',
@@ -51,9 +51,16 @@ export default function EventForm({ initial = {}, onSubmit, loading }) {
                     ))}
                 </select>
             </div>
-            <button type="submit" disabled={loading}>
-                {loading ? 'Saving...' : 'Save'}
-            </button>
+            <div className="btn-group">
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Saving...' : 'Save'}
+                </button>
+                {onCancel && (
+                    <button type="button" className="btn btn-outline" onClick={onCancel} disabled={loading}>
+                        Cancel
+                    </button>
+                )}
+            </div>
         </form>
     );
 }

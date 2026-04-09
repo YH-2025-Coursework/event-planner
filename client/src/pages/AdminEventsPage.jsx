@@ -74,32 +74,55 @@ export default function AdminEventsPage() {
             {loading && <p>Loading events...</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            <button onClick={() => { setShowCreate(true); setEditingEvent(null); }}>
-                + Create Event
-            </button>
+            <div style={{ margin: '16px 0' }}>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => { setShowCreate(true); setEditingEvent(null); }}
+                >
+                    + Create Event
+                </button>
+            </div>
 
             {showCreate && (
-                <>
-                    <EventForm key="new" onSubmit={handleCreate} loading={formLoading} />
-                    <button onClick={() => setShowCreate(false)}>Cancel</button>
-                </>
+                <EventForm
+                    key="new"
+                    onSubmit={handleCreate}
+                    onCancel={() => setShowCreate(false)}
+                    loading={formLoading}
+                />
             )}
 
             {editingEvent && (
-                <>
-                    <EventForm key={editingEvent.id} initial={editingEvent} onSubmit={handleUpdate} loading={formLoading} />
-                    <button onClick={() => setEditingEvent(null)}>Cancel</button>
-                </>
+                <EventForm
+                    key={editingEvent.id}
+                    initial={editingEvent}
+                    onSubmit={handleUpdate}
+                    onCancel={() => setEditingEvent(null)}
+                    loading={formLoading}
+                />
             )}
 
             {events.map(event => (
-                <div key={event.id} className="event-card">
-                    <h2>{event.title}</h2>
-                    <p>{event.location}</p>
-                    <button onClick={() => { setEditingEvent(event); setShowCreate(false); }}>Edit</button>
-                    <button onClick={() => handleDelete(event.id)} disabled={deletingId === event.id}>
-                        {deletingId === event.id ? 'Deleting...' : 'Delete'}
-                    </button>
+                <div key={event.id} className="event-card event-admin-row">
+                    <div>
+                        <h2>{event.title}</h2>
+                        <p>{event.location}</p>
+                    </div>
+                    <div className="btn-group">
+                        <button
+                            className="btn btn-outline"
+                            onClick={() => { setEditingEvent(event); setShowCreate(false); }}
+                        >
+                            Edit
+                        </button>
+                        <button
+                            className="btn btn-danger"
+                            onClick={() => handleDelete(event.id)}
+                            disabled={deletingId === event.id}
+                        >
+                            {deletingId === event.id ? 'Deleting...' : 'Delete'}
+                        </button>
+                    </div>
                 </div>
             ))}
         </div>

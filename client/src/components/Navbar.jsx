@@ -12,44 +12,35 @@ export default function Navbar() {
         navigate('/login');
     };
 
-    const navStyle = {
-        display: 'flex',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-        gap: '20px',
-        padding: '1rem',
-        background: '#f4f4f4',
-        marginBottom: '20px'
-    };
-
     return (
-        <nav style={navStyle}>
-            {!isAuthenticated ? (
-                <>
-                    <Link to="/">Events</Link>
-                    <Link to="/login">Login</Link>
-                    <Link to="/register">Register</Link>
-                </>
-            ) : (
-                <>
-                    <Link to="/">Events</Link>
-                    {isAdmin && (
-                        <Link to="/admin/events">Manage Events</Link>
-                    )}
-                    <button
-                        onClick={handleLogout}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            fontSize: 'inherit',
-                            color: 'crimson'
-                        }}
-                    >
-                        Logout
-                    </button>
-                </>
-            )}
+        <nav style={{
+            background: '#f4f4f4',
+            marginBottom: '20px'
+        }}>
+            <div style={{
+                display: 'flex',
+                alignItems: 'stretch',
+                height: '48px',
+                maxWidth: '720px',
+                margin: '0 auto',
+                padding: '0 20px'
+            }}>
+                {!isAuthenticated ? (
+                    <>
+                        <Link className="nav-link" to="/">Events</Link>
+                        <Link className="nav-link" to="/login">Login</Link>
+                        <Link className="nav-link" to="/register">Register</Link>
+                    </>
+                ) : (
+                    <>
+                        <Link className="nav-link" to="/">Events</Link>
+                        {isAdmin && (
+                            <Link className="nav-link" to="/admin/events">Manage Events</Link>
+                        )}
+                        <button className="nav-link" onClick={handleLogout}>Logout</button>
+                    </>
+                )}
+            </div>
         </nav>
     );
 }

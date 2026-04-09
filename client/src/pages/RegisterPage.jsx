@@ -29,8 +29,8 @@ export default function RegisterPage() {
 
     return (
         <div>
-            <h1>Register</h1>
             <form onSubmit={handleSubmit}>
+                <h1>Register</h1>
                 <div>
                     {/* Added htmlFor and id to link these for the test */}
                     <label htmlFor="displayName">Display Name</label>
