@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getCategories } from '../api/events';
 
-export default function EventForm({ initial = {}, onSubmit, loading }) {
+export default function EventForm({ initial = {}, onSubmit, onCancel, loading }) {
     const [form, setForm] = useState({
         title: initial.title || '',
         description: initial.description || '',
@@ -8,6 +9,11 @@ export default function EventForm({ initial = {}, onSubmit, loading }) {
         startDate: initial.startDate ? initial.startDate.slice(0, 10) : '',
         categoryId: initial.categoryId || '',
     });
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() => {
+        getCategories().then(res => setCategories(res.data));
+    }, []);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -37,12 +43,24 @@ export default function EventForm({ initial = {}, onSubmit, loading }) {
                 <input type="date" name="startDate" value={form.startDate} onChange={handleChange} required />
             </div>
             <div>
-                <label>Category ID</label>
-                <input type="number" name="categoryId" value={form.categoryId} onChange={handleChange} required />
+                <label>Category</label>
+                <select name="categoryId" value={form.categoryId} onChange={handleChange} required>
+                    <option value="">Select a category</option>
+                    {categories.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                </select>
             </div>
-            <button type="submit" disabled={loading}>
-                {loading ? 'Saving...' : 'Save'}
-            </button>
+            <div className="btn-group">
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Saving...' : 'Save'}
+                </button>
+                {onCancel && (
+                    <button type="button" className="btn btn-outline" onClick={onCancel} disabled={loading}>
+                        Cancel
+                    </button>
+                )}
+            </div>
         </form>
     );
 }

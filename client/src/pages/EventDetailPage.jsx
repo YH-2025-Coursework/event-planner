@@ -22,8 +22,9 @@ export default function EventDetailPage() {
             .catch(err => { console.error(err); setError('Event not found'); })
             .finally(() => setLoading(false));
     }, [id]);
+
     useEffect(() => {
-        if (!isAuthenticated) return; // skip if not logged in
+        if (!isAuthenticated) return;
         getMyRsvps()
             .then(res => {
                 const match = res.data.find(r => r.eventId === parseInt(id));
@@ -31,7 +32,6 @@ export default function EventDetailPage() {
             })
             .catch(err => console.error('Failed to fetch RSVPs', err));
     }, [id, isAuthenticated]);
-
 
     const statusMap = { Going: 0, Maybe: 1, NotGoing: 2 };
     const statusLabel = { Going: 'Going', Maybe: 'Maybe', NotGoing: 'Not Going' };
@@ -41,7 +41,7 @@ export default function EventDetailPage() {
         setRsvpError(null);
         try {
             const res = await createRsvp({ eventId: parseInt(id), status: statusMap[status] });
-            setMyRsvp(res.data); // save the new RSVP into state
+            setMyRsvp(res.data);
         } catch (err) {
             setRsvpError('Failed to RSVP. Please try again.');
         } finally {
@@ -72,9 +72,6 @@ export default function EventDetailPage() {
         }
     };
 
-
-
-
     if (loading) return <p>Loading...</p>;
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
@@ -82,51 +79,59 @@ export default function EventDetailPage() {
         <div className="page">
             <button className="back-btn" onClick={() => navigate('/')}>Back</button>
             <h1>{event.title}</h1>
+
+            <div className="event-meta">
+                <p><span>Location</span>{event.location}</p>
+                <p><span>Date</span>{new Date(event.startDate).toLocaleDateString()}</p>
+                <p><span>Category</span>{event.categoryName}</p>
+                <p><span>Organizer</span>{event.organizerDisplayName}</p>
+            </div>
+
             <p>{event.description}</p>
-            <p>{event.location}</p>
-            <p>{new Date(event.startDate).toLocaleDateString()}</p>
-            <p>{event.categoryName}</p>
-            <p>Organizer: {event.organizerDisplayName}</p>
-            <hr />
+
+            <hr style={{ margin: '20px 0' }} />
 
             {!isAuthenticated ? (
                 <p><Link to="/login">Log in to RSVP</Link></p>
 
             ) : myRsvp ? (
-                <div>
+                <div className="rsvp-section">
                     <p>Your RSVP: <strong>{statusLabel[myRsvp.status] ?? myRsvp.status}</strong></p>
-                    <button onClick={handleCancel} disabled={rsvpLoading}>
-                        {rsvpLoading ? 'Cancelling...' : 'Cancel RSVP'}
-                    </button>
+                    <div className="btn-group">
+                        <button className="btn btn-outline" onClick={handleCancel} disabled={rsvpLoading}>
+                            {rsvpLoading ? 'Cancelling...' : 'Cancel RSVP'}
+                        </button>
+                    </div>
                 </div>
 
             ) : (
-                <div>
+                <div className="rsvp-section">
                     <p>Will you attend?</p>
-                    {['Going', 'Maybe', 'NotGoing'].map(status => (
-                        <button
-                            key={status}
-                            onClick={() => handleRsvp(status)}
-                            disabled={rsvpLoading}
-                        >
-                            {rsvpLoading ? '...' : statusLabel[status]}
-                        </button>
-                    ))}
+                    <div className="btn-group">
+                        {['Going', 'Maybe', 'NotGoing'].map(status => (
+                            <button
+                                key={status}
+                                className="btn btn-outline"
+                                onClick={() => handleRsvp(status)}
+                                disabled={rsvpLoading}
+                            >
+                                {rsvpLoading ? '...' : statusLabel[status]}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             )}
 
-            {rsvpError && <p style={{ color: 'red' }}>{rsvpError}</p>}
+            {rsvpError && <p style={{ color: 'red', marginTop: '8px' }}>{rsvpError}</p>}
+
             {isAdmin && (
-                <div>
-                    <hr />
-                    <Link to="/admin/events">Edit in Admin Panel</Link>
-                    <button onClick={handleAdminDelete} style={{ color: 'red', marginLeft: '1rem' }}>
-                        Delete Event
-                    </button>
+                <div className="admin-controls">
+                    <div className="btn-group">
+                        <Link className="btn btn-outline" to="/admin/events">Edit in Admin Panel</Link>
+                        <button className="btn btn-danger" onClick={handleAdminDelete}>Delete Event</button>
+                    </div>
                 </div>
             )}
-
-
         </div>
     );
 }
