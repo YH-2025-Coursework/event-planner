@@ -25,7 +25,7 @@ export default function Navbar() {
     return (
         <nav style={navStyle}>
             {!isAuthenticated ? (
-                <> 
+                <>
                     <Link to="/">Events</Link>
                     <Link to="/login">Login</Link>
                     <Link to="/register">Register</Link>
