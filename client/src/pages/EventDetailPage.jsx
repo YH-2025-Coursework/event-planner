@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getEvent } from '../api/events';
+import { getEvent, deleteEvent } from '../api/events';
 import { Link } from 'react-router-dom'; 
 import { getMyRsvps, createRsvp, deleteRsvp } from '../api/rsvps'; 
 import { useAuth } from '../context/AuthContext'; 
 
 export default function EventDetailPage() {
     const { id } = useParams();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated,isAdmin } = useAuth();
     const navigate = useNavigate();
     const [event, setEvent] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -49,18 +49,29 @@ export default function EventDetailPage() {
     }
 };
 
-    const handleCancel = async () => {
+  const handleCancel = async () => {
     setRsvpLoading(true);
     setRsvpError(null);
     try {
         await deleteRsvp(myRsvp.id);
-        setMyRsvp(null); // clear RSVP from state
+        setMyRsvp(null);
     } catch (err) {
         setRsvpError('Failed to cancel RSVP. Please try again.');
     } finally {
         setRsvpLoading(false);
     }
 };
+
+const handleAdminDelete = async () => {
+    if (!confirm('Delete this event?')) return;
+    try {
+        await deleteEvent(id);
+        navigate('/admin/events');
+    } catch {
+        setError('Failed to delete event');
+    }
+};
+
 
 
 
@@ -105,6 +116,17 @@ export default function EventDetailPage() {
             )}
 
             {rsvpError && <p style={{ color: 'red' }}>{rsvpError}</p>}
+{isAdmin && (
+    <div>
+        <hr />
+        <Link to="/admin/events">Edit in Admin Panel</Link>
+        <button onClick={handleAdminDelete} style={{ color: 'red', marginLeft: '1rem' }}>
+            Delete Event
+        </button>
+    </div>
+)}
+
+
         </div>
     );
 }
