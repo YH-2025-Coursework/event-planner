@@ -34,6 +34,7 @@ export default function EventDetailPage() {
 
 
     const statusMap = { Going: 0, Maybe: 1, NotGoing: 2 };
+    const statusLabel = { Going: 'Going', Maybe: 'Maybe', NotGoing: 'Not Going' };
 
     const handleRsvp = async (status) => {
     setRsvpLoading(true);
@@ -82,7 +83,7 @@ export default function EventDetailPage() {
 
             ) : myRsvp ? (
                 <div>
-                    <p>Your RSVP: <strong>{myRsvp.status}</strong></p>
+                    <p>Your RSVP: <strong>{statusLabel[myRsvp.status] ?? myRsvp.status}</strong></p>
                     <button onClick={handleCancel} disabled={rsvpLoading}>
                         {rsvpLoading ? 'Cancelling...' : 'Cancel RSVP'}
                     </button>
@@ -97,7 +98,7 @@ export default function EventDetailPage() {
                             onClick={() => handleRsvp(status)}
                             disabled={rsvpLoading}
                         >
-                            {rsvpLoading ? '...' : status}
+                            {rsvpLoading ? '...' : statusLabel[status]}
                         </button>
                     ))}
                 </div>
