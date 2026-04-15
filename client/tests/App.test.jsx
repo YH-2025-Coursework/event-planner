@@ -8,7 +8,7 @@ vi.mock('../src/api/client', () => ({
   default: { get: vi.fn().mockResolvedValue({ data: [] }), post: vi.fn() }
 }));
 
-test('renders Events Page header', () => {
+test('renders Events Page header', async () => {
   render(
     <BrowserRouter>
       <AuthProvider>
@@ -18,6 +18,6 @@ test('renders Events Page header', () => {
   );
   
   // Changed "Event Planner" to "Events Page" to match your code
-  const headerElement = screen.getByText(/events page/i);
+  const headerElement = await screen.findByText(/^events$/i);
   expect(headerElement).toBeInTheDocument();
 });
